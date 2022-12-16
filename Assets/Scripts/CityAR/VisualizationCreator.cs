@@ -10,6 +10,7 @@ namespace CityAR
         private DataObject _dataObject;
         private GameObject _platform;
         private Data _data;
+        private float maxLOC=0;
 
         private void Start()
         {
@@ -38,7 +39,8 @@ namespace CityAR
         {
             if (entry.type.Equals("File"))
             {
-                //TODO if entry is from type File, create building
+                BuildBuilding(entry);
+
             }
             else
             {
@@ -46,6 +48,9 @@ namespace CityAR
                 float z = entry.z;
 
                 float dirLocs = entry.numberOfLines;
+                if(maxLOC<dirLocs){
+                    maxLOC=dirLocs;
+                }
                 entry.color = GetColorForDepth(entry.deepth);
 
                 BuildDistrictBlock(entry, false);
@@ -138,6 +143,44 @@ namespace CityAR
                 Vector3 scale = prefabInstance.transform.localScale;
                 float scaleX = scale.x - (entry.deepth * 0.005f);
                 float scaleZ = scale.z - (entry.deepth * 0.005f);
+                float shiftX = (scale.x - scaleX) / 2f;
+                float shiftZ = (scale.z - scaleZ) / 2f;
+                prefabInstance.transform.localScale = new Vector3(scaleX, scale.y, scaleZ);
+                Vector3 position = prefabInstance.transform.localPosition;
+                prefabInstance.transform.localPosition = new Vector3(position.x - shiftX, position.y, position.z + shiftZ);
+            }
+        }
+
+
+
+        private void BuildBuilding(Entry entry)
+        {
+            if (entry == null)
+            {
+                return;
+            }
+            float dirLocs = entry.parentEntry.numberOfLines;
+            float ratio = entry.numberOfLines / dirLocs;
+            float d=entry.numberOfLines;
+            entry.w=ratio;
+            entry.h=ratio;
+
+            Debug.Log("Bis hierhin");
+            if (entry.w * entry.h > 0)
+            {
+                Debug.Log(" und noch viel weiter!");
+                GameObject prefabInstance = Instantiate(districtPrefab, _platform.transform, true);
+
+
+                prefabInstance.name = entry.name;
+                prefabInstance.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(0.5f,0.5f,0.5f);
+                prefabInstance.transform.localScale = new Vector3(entry.w, d ,entry.h);
+                prefabInstance.transform.localPosition = new Vector3(entry.x, entry.deepth, entry.z);
+
+                
+                Vector3 scale = prefabInstance.transform.localScale;
+                float scaleX = scale.x - (entry.deepth * 0.1f);
+                float scaleZ = scale.z - (entry.deepth * 0.1f);
                 float shiftX = (scale.x - scaleX) / 2f;
                 float shiftZ = (scale.z - scaleZ) / 2f;
                 prefabInstance.transform.localScale = new Vector3(scaleX, scale.y, scaleZ);
