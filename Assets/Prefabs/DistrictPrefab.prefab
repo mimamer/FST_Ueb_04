@@ -121,10 +121,10 @@ MonoBehaviour:
   radius: 2
   radialRange: 180
   distance: 0
-  rows: 1
+  rows: 10
   columns: 3
-  cellWidth: 0.5
-  cellHeight: 0.5
+  cellWidth: 0.1
+  cellHeight: 0.1
   assetVersion: 1
 --- !u!1 &4492622769918400404
 GameObject:

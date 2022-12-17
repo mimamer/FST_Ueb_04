@@ -1,12 +1,13 @@
 ﻿using DefaultNamespace;
 using UnityEngine;
 using Microsoft.MixedReality.Toolkit.Utilities;
+using System;
 
 namespace CityAR
 {
     public class VisualizationCreator : MonoBehaviour
     {
-        int countBuildings=0;
+        float maxLoc=0;
         public GameObject districtPrefab;
         public GameObject buildingPrefab;
         private DataObject _dataObject;
@@ -28,7 +29,36 @@ namespace CityAR
                 p.project.w = 1;
                 p.project.h = 1;
                 p.project.deepth = 1;
+                findMaxLoc(p.project);
                 BuildDistrict(p.project, false);
+                File_Building(p.project);
+            }
+        }
+        
+        private void File_Building(Entry entry){
+            if(entry.type.Equals("File")){
+                BuildBuilding(entry);
+                return;
+            }
+            else{
+                foreach (Entry subEntry in entry.files) {
+                    File_Building(subEntry);
+                }
+            }
+        }
+
+
+        private void findMaxLoc(Entry entry){
+            if(entry.type.Equals("File")){
+                if(entry.numberOfLines>maxLoc){
+                    maxLoc=entry.numberOfLines;
+                }
+                return;
+            }
+            else{
+                foreach (Entry subEntry in entry.files) {
+                    findMaxLoc(subEntry);
+                }
             }
         }
 
@@ -40,11 +70,7 @@ namespace CityAR
         {
             if (entry.type.Equals("File"))
             {
-                if(countBuildings>=0){
-                    BuildBuilding(entry);
-                }
                 return;
-
             }
             
             float x = entry.x;
@@ -83,9 +109,6 @@ namespace CityAR
                 
             }
 
-            //hier kommen nur die Entry an die keine Files sind sondern Ordner
-            //jeder Ordner wird auch nochmal eine Basis. Oben wurden die Subentry Kinder auf die ohne Basis gesetzt?
-
             if (!splitHorizontal)
             {
                 entry.x = x;
@@ -107,9 +130,7 @@ namespace CityAR
             }
             entry.deepth += 1;
             BuildDistrictBlock(entry, true); 
-            
-            //Hier wird nochmal eine gruene Plane zum Bereits vorhandenen nicht-basis eintrag erstellt, Order mit Ordner und Files drin
-            //die Files stehen aber nicht auf der Basis-Plane sondern der Nicht-Basis Plane -> schlecht.
+
         }
 
         /*
@@ -180,7 +201,8 @@ namespace CityAR
             }
             float dirLocs = entry.parentEntry.numberOfLines;
             float ratio = entry.numberOfLines / dirLocs;
-            float d=entry.numberOfLines;
+            float d=(float)(Math.Log((float)(entry.numberOfLines))/Math.Log(maxLoc));
+            d=d*10f;
             entry.w=ratio;
             entry.h=ratio;
             var goc=entry.parentEntry.goc;
@@ -192,12 +214,10 @@ namespace CityAR
 
                 GameObject prefabInstance = Instantiate(buildingPrefab, trans , true);
                 prefabInstance.name = entry.name;
-                prefabInstance.transform.localPosition=new Vector3(0f,0f,0f);
-                prefabInstance.transform.localScale = new Vector3(entry.w, d ,entry.h);
+                prefabInstance.transform.localScale = new Vector3(entry.w, d ,entry.h); 
+                prefabInstance.transform.localPosition=new Vector3(0f,0.57f,0f);//gruene Basen sind ungefaehr 0.57 hoch...
                 goc.UpdateCollection();
             }
-
-            countBuildings++;
         }
 
         private bool ContainsDirs(Entry entry)
