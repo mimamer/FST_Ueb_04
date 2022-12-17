@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028328, g: 0.22571328, b: 0.3069218, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -292,6 +292,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   districtPrefab: {fileID: 4492622769918400404, guid: 6ee7b1065cf15dd459b53be25719f81c, type: 3}
+  buildingPrefab: {fileID: 1340838579593637626, guid: 0753d8d0170026247a025bff53eb19a7, type: 3}
 --- !u!114 &854638688
 MonoBehaviour:
   m_ObjectHideFlags: 0

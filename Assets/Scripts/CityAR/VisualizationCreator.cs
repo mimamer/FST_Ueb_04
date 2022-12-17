@@ -1,5 +1,6 @@
 ﻿using DefaultNamespace;
 using UnityEngine;
+using Microsoft.MixedReality.Toolkit.Utilities;
 
 namespace CityAR
 {
@@ -7,6 +8,7 @@ namespace CityAR
     {
 
         public GameObject districtPrefab;
+        public GameObject buildingPrefab;
         private DataObject _dataObject;
         private GameObject _platform;
         private Data _data;
@@ -48,9 +50,11 @@ namespace CityAR
                 float z = entry.z;
 
                 float dirLocs = entry.numberOfLines;
+
                 if(maxLOC<dirLocs){
                     maxLOC=dirLocs;
                 }
+
                 entry.color = GetColorForDepth(entry.deepth);
 
                 BuildDistrictBlock(entry, false);
@@ -123,6 +127,8 @@ namespace CityAR
             if (w * h > 0)
             {
                 GameObject prefabInstance = Instantiate(districtPrefab, _platform.transform, true);
+                entry.goc=prefabInstance.transform.GetChild(0).gameObject.GetComponent<GridObjectCollection>();
+                var xhdsajgh=entry.goc.gameObject;
 
                 if (!isBase)
                 {
@@ -137,7 +143,6 @@ namespace CityAR
                     prefabInstance.transform.GetChild(0).rotation = Quaternion.Euler(90,0,0);
                     prefabInstance.transform.localScale = new Vector3(entry.w, 1,entry.h);
                     prefabInstance.transform.localPosition = new Vector3(entry.x, entry.deepth+0.001f, entry.z);
-
                 }
                 
                 Vector3 scale = prefabInstance.transform.localScale;
@@ -164,18 +169,21 @@ namespace CityAR
             float d=entry.numberOfLines;
             entry.w=ratio;
             entry.h=ratio;
+            var goc=entry.parentEntry.goc;
+            var goc_gameObject=goc.gameObject;
+            var trans=goc_gameObject.transform;
 
             Debug.Log("Bis hierhin");
             if (entry.w * entry.h > 0)
             {
                 Debug.Log(" und noch viel weiter!");
-                GameObject prefabInstance = Instantiate(districtPrefab, _platform.transform, true);
+                GameObject prefabInstance = Instantiate(buildingPrefab, trans , true);
 
 
                 prefabInstance.name = entry.name;
-                prefabInstance.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(0.5f,0.5f,0.5f);
+                //prefabInstance.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(0.5f,0.5f,0.5f);
                 prefabInstance.transform.localScale = new Vector3(entry.w, d ,entry.h);
-                prefabInstance.transform.localPosition = new Vector3(entry.x, entry.deepth, entry.z);
+                //prefabInstance.transform.localPosition = new Vector3(entry.x, entry.deepth, entry.z);
 
                 
                 Vector3 scale = prefabInstance.transform.localScale;
@@ -184,8 +192,9 @@ namespace CityAR
                 float shiftX = (scale.x - scaleX) / 2f;
                 float shiftZ = (scale.z - scaleZ) / 2f;
                 prefabInstance.transform.localScale = new Vector3(scaleX, scale.y, scaleZ);
-                Vector3 position = prefabInstance.transform.localPosition;
-                prefabInstance.transform.localPosition = new Vector3(position.x - shiftX, position.y, position.z + shiftZ);
+                //Vector3 position = prefabInstance.transform.localPosition;
+                //prefabInstance.transform.localPosition = new Vector3(position.x - shiftX, position.y, position.z + shiftZ);
+                goc.UpdateCollection();
             }
         }
 
