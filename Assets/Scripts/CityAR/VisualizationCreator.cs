@@ -113,6 +113,7 @@ namespace CityAR
             {
                 entry.x = x;
                 entry.z = z;
+                entry.horizontal=false;
                 if (ContainsDirs(entry))
                 {
                     entry.h = 1f - z;
@@ -123,6 +124,7 @@ namespace CityAR
             {
                 entry.x = -x;
                 entry.z = z;
+                entry.horizontal=true;
                 if (ContainsDirs(entry))
                 {
                     entry.w = 1f - x;
@@ -195,7 +197,7 @@ namespace CityAR
 
         private void BuildBuilding(Entry entry)
         {
-            if (entry == null || (entry.parentEntry.name.Contains("Base")))
+            if (entry == null)
             {
                 return;
             }
@@ -203,8 +205,15 @@ namespace CityAR
             float ratio = entry.numberOfLines / dirLocs;
             float d=(float)(Math.Log((float)(entry.numberOfLines))/Math.Log(maxLoc));
             d=d*10f;
-            entry.w=ratio;
-            entry.h=ratio;
+            if(entry.parentEntry.horizontal){
+                entry.h=ratio;
+                entry.w=entry.parentEntry.w/(float)entry.parentEntry.files.Count; //goc.layout des district anpassen...
+            }else{
+                entry.w=ratio;
+                entry.h=entry.parentEntry.h/(float)entry.parentEntry.files.Count;
+            }
+            
+            
             var goc=entry.parentEntry.goc;
             var goc_gameObject=goc.gameObject;
             var trans=goc_gameObject.transform;
@@ -215,7 +224,7 @@ namespace CityAR
                 GameObject prefabInstance = Instantiate(buildingPrefab, trans , true);
                 prefabInstance.name = entry.name;
                 prefabInstance.transform.localScale = new Vector3(entry.w, d ,entry.h); 
-                prefabInstance.transform.localPosition=new Vector3(0f,0.57f,0f);//gruene Basen sind ungefaehr 0.57 hoch...
+                prefabInstance.transform.localPosition=new Vector3(0f,0f,0f);
                 goc.UpdateCollection();
             }
         }

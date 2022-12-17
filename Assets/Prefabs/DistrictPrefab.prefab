@@ -113,16 +113,16 @@ MonoBehaviour:
   sortType: 0
   surfaceType: 1
   orientType: 0
-  layout: 1
-  anchor: 4
+  layout: 0
+  anchor: 1
   anchorAlongAxis: 0
-  columnAlignment: 0
+  columnAlignment: 1
   rowAlignment: 0
   radius: 2
   radialRange: 180
   distance: 0
   rows: 10
-  columns: 3
+  columns: 10
   cellWidth: 0.1
   cellHeight: 0.1
   assetVersion: 1
