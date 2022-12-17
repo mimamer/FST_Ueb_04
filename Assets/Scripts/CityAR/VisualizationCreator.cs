@@ -6,7 +6,7 @@ namespace CityAR
 {
     public class VisualizationCreator : MonoBehaviour
     {
-
+        int countBuildings=0;
         public GameObject districtPrefab;
         public GameObject buildingPrefab;
         private DataObject _dataObject;
@@ -41,73 +41,74 @@ namespace CityAR
         {
             if (entry.type.Equals("File"))
             {
-                BuildBuilding(entry);
+                if(countBuildings<6){
+                    BuildBuilding(entry);
+                }
+                return;
 
             }
-            else
-            {
-                float x = entry.x;
-                float z = entry.z;
+            
+            float x = entry.x;
+            float z = entry.z;
 
-                float dirLocs = entry.numberOfLines;
+            float dirLocs = entry.numberOfLines;
 
-                if(maxLOC<dirLocs){
-                    maxLOC=dirLocs;
-                }
+            if(maxLOC<dirLocs){
+                maxLOC=dirLocs;
+            }
 
-                entry.color = GetColorForDepth(entry.deepth);
+            entry.color = GetColorForDepth(entry.deepth);
 
-                BuildDistrictBlock(entry, false);
+            BuildDistrictBlock(entry, false);
 
-                foreach (Entry subEntry in entry.files) {
-                    subEntry.x = x;
-                    subEntry.z = z;
-                    
-                    if (subEntry.type.Equals("Dir"))
-                    {
-                        float ratio = subEntry.numberOfLines / dirLocs;
-                        subEntry.deepth = entry.deepth + 1;
-
-                        if (splitHorizontal) {
-                            subEntry.w = ratio * entry.w; // split along horizontal axis
-                            subEntry.h = entry.h;
-                            x += subEntry.w;
-                        } else {
-                            subEntry.w = entry.w;
-                            subEntry.h = ratio * entry.h; // split along vertical axis
-                            z += subEntry.h;
-                        }
-                    }
-                    else
-                    {
-                        subEntry.parentEntry = entry;
-                    }
-                    BuildDistrict(subEntry, !splitHorizontal);
-                }
-
-                if (!splitHorizontal)
+            foreach (Entry subEntry in entry.files) {
+                subEntry.x = x;
+                subEntry.z = z;
+                
+                if (subEntry.type.Equals("Dir"))
                 {
-                    entry.x = x;
-                    entry.z = z;
-                    if (ContainsDirs(entry))
-                    {
-                        entry.h = 1f - z;
+                    float ratio = subEntry.numberOfLines / dirLocs;
+                    subEntry.deepth = entry.deepth + 1;
+
+                    if (splitHorizontal) {
+                        subEntry.w = ratio * entry.w; // split along horizontal axis
+                        subEntry.h = entry.h;
+                        x += subEntry.w;
+                    } else {
+                        subEntry.w = entry.w;
+                        subEntry.h = ratio * entry.h; // split along vertical axis
+                        z += subEntry.h;
                     }
-                    entry.deepth += 1;
-                    BuildDistrictBlock(entry, true);
                 }
                 else
                 {
-                    entry.x = -x;
-                    entry.z = z;
-                    if (ContainsDirs(entry))
-                    {
-                        entry.w = 1f - x;
-                    }
-                    entry.deepth += 1;
-                    BuildDistrictBlock(entry, true);
+                    subEntry.parentEntry = entry;
+                }
+                BuildDistrict(subEntry, !splitHorizontal);
+                
+            }
+
+            if (!splitHorizontal)
+            {
+                entry.x = x;
+                entry.z = z;
+                if (ContainsDirs(entry))
+                {
+                    entry.h = 1f - z;
+                }
+                
+            }
+            else
+            {
+                entry.x = -x;
+                entry.z = z;
+                if (ContainsDirs(entry))
+                {
+                    entry.w = 1f - x;
                 }
             }
+            entry.deepth += 1;
+            BuildDistrictBlock(entry, true);
         }
 
         /*
@@ -140,6 +141,7 @@ namespace CityAR
                 else
                 {
                     prefabInstance.name = entry.name+"Base";
+                    entry.name=entry.name+"Base"; //new
                     prefabInstance.transform.GetChild(0).rotation = Quaternion.Euler(90,0,0);
                     prefabInstance.transform.localScale = new Vector3(entry.w, 1,entry.h);
                     prefabInstance.transform.localPosition = new Vector3(entry.x, entry.deepth+0.001f, entry.z);
@@ -160,7 +162,7 @@ namespace CityAR
 
         private void BuildBuilding(Entry entry)
         {
-            if (entry == null)
+            if (entry == null || (entry.parentEntry.name.Contains("Base")))
             {
                 return;
             }
@@ -196,6 +198,8 @@ namespace CityAR
                 //prefabInstance.transform.localPosition = new Vector3(position.x - shiftX, position.y, position.z + shiftZ);
                 goc.UpdateCollection();
             }
+
+            countBuildings++;
         }
 
         private bool ContainsDirs(Entry entry)
