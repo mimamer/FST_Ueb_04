@@ -1,4 +1,5 @@
-﻿using DefaultNamespace;
+﻿//Michelle Mergen
+using DefaultNamespace;
 using UnityEngine;
 using Microsoft.MixedReality.Toolkit.Utilities;
 using System;
