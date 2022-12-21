@@ -34,6 +34,6 @@ namespace DefaultNamespace
         public GridObjectCollection goc;
         public Entry parentEntry;
         public Color color;
-        public bool horizontal;
+        public bool splitHorizontal;
     }
 }

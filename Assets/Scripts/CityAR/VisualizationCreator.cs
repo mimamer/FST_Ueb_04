@@ -94,11 +94,13 @@ namespace CityAR
                     if (splitHorizontal) {
                         subEntry.w = ratio * entry.w; // split along horizontal axis
                         subEntry.h = entry.h;
+                        subEntry.splitHorizontal=true;
                         x += subEntry.w;
                     } else {
                         subEntry.w = entry.w;
                         subEntry.h = ratio * entry.h; // split along vertical axis
                         z += subEntry.h;
+                        subEntry.splitHorizontal=false;
                     }
                 }
                 else
@@ -113,7 +115,6 @@ namespace CityAR
             {
                 entry.x = x;
                 entry.z = z;
-                entry.horizontal=false;
                 if (ContainsDirs(entry))
                 {
                     entry.h = 1f - z;
@@ -124,7 +125,6 @@ namespace CityAR
             {
                 entry.x = -x;
                 entry.z = z;
-                entry.horizontal=true;
                 if (ContainsDirs(entry))
                 {
                     entry.w = 1f - x;
@@ -176,6 +176,7 @@ namespace CityAR
                     prefabInstance.transform.GetChild(0).rotation = Quaternion.Euler(90,0,0);
                     prefabInstance.transform.localScale = new Vector3(entry.w, 1,entry.h);
                     prefabInstance.transform.localPosition = new Vector3(entry.x, entry.deepth+0.001f, entry.z);
+                    prefabInstance.transform.GetChild(0).GetComponent<MeshRenderer>().enabled=false;
                     
                     
                 }
@@ -205,18 +206,14 @@ namespace CityAR
             float ratio = entry.numberOfLines / dirLocs;
             float d=(float)(Math.Log((float)(entry.numberOfLines))/Math.Log(maxLoc));
             d=d*10f;
-            if(entry.parentEntry.horizontal){
-                entry.h=ratio;
-                entry.w=entry.parentEntry.w/(float)entry.parentEntry.files.Count; //goc.layout des district anpassen...
-            }else{
-                entry.w=ratio;
-                entry.h=entry.parentEntry.h/(float)entry.parentEntry.files.Count;
-            }
-            
             
             var goc=entry.parentEntry.goc;
             var goc_gameObject=goc.gameObject;
             var trans=goc_gameObject.transform;
+
+            entry.w=0.01f;
+            entry.h=0.01f;
+
 
             if (entry.w * entry.h > 0)
             {
