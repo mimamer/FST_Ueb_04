@@ -562,6 +562,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Display
       objectReference: {fileID: 0}
+    - target: {fileID: 4022951561459325791, guid: 87a0defa9c94ec954b6846fdb5903650, type: 3}
+      propertyPath: m_text
+      value: "Bitte Geb\xE4ude ber\xFChren, um die Metriken hier anzeigen zu lassen.\n"
+      objectReference: {fileID: 0}
     - target: {fileID: 4622668969223438399, guid: 87a0defa9c94ec954b6846fdb5903650, type: 3}
       propertyPath: m_RootOrder
       value: 5

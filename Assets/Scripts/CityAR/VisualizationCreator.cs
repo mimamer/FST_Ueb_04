@@ -219,6 +219,7 @@ namespace CityAR
             {
 
                 GameObject prefabInstance = Instantiate(buildingPrefab, trans , true);
+                prefabInstance.transform.GetChild(0).GetChild(0).gameObject.GetComponent<TouchBuilding>().entry=entry;
                 prefabInstance.name = entry.name;
                 prefabInstance.transform.localScale = new Vector3(entry.w, d ,entry.h); 
                 prefabInstance.transform.localPosition=new Vector3(0f,0f,0f);
